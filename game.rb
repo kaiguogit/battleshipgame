@@ -53,12 +53,21 @@ class Game
   ships
   end
 
+  def hit
+    begin
+      row = @gui.hit_row(turn)
+      col = @gui.hit_col(turn)
+      @gui.spot_has_been_hit if @players[turn_opposite].board.has_been_hit?(row,col)
+    end while @players[turn_opposite].board.has_been_hit?(row,col)
+    @players[turn_opposite].board.hit(row,col)
+  end
+
   def start
     get_player_name
     reset
     while true
       @gui.show_turn(turn, @players)
-      @players[turn_opposite].board.hit(@gui.hit_row(turn),@gui.hit_col(turn))
+      hit
       @gui.print_player_board(@players, turn, true)
       @gui.print_player_board(@players, turn_opposite, false)
       toggle_turn

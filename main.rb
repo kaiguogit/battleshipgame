@@ -4,6 +4,7 @@ require 'pry-byebug'
 require_relative 'gui'
 require_relative 'player'
 require_relative 'game'
+require 'colorize'
 
 game = Game.new
 

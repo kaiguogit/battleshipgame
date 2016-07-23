@@ -18,12 +18,12 @@ class Gui
     print "#{index}|"
     row.each do |col|
       if col[:shipid] == 0
-        print "#{col[:hit] ? "H" : "_"}|"
+        print "#{col[:hit] ? "H".green : "_"}|"
       else 
         if visible
-          print "#{col[:hit] ? "x" : "0"}|"
+          print "#{col[:hit] ? "X".red : "0".yellow}|"
         else
-          print "#{col[:hit] ? "x" : "_"}|"
+          print "#{col[:hit] ? "X".red : "_"}|"
         end
       end
     end
@@ -41,20 +41,22 @@ class Gui
   def hit_row(player)
     begin 
       puts "Player #{player + 1} Please enter the row number you want to hit, valid iput is 0-9"
-      row = get_input.to_i
-    end while !verify(row)
-    row
+      row = get_input
+      verify  = row.match(/^[0-9]$/)
+      puts "Invalid input.".red if verify == nil
+    end while verify == nil
+    row.to_i
   end
 
   def hit_col(player)
-    alphabet = ("a".."j").to_a
     begin 
       puts "Player #{player + 1} Please enter the row number you want to hit, valid iput is A-J"
       col = get_input    
-      #binding.pry
-      col = alphabet.index(col)
-    end while !verify(col)
-    col
+      verify = col.match(/^[a-j]$/)
+      puts "Invalid input.".red if verify ==nil
+    end while verify == nil
+    alphabet = ("a".."j").to_a
+    alphabet.index(col)
   end
 
   def verify(input)
@@ -67,5 +69,9 @@ class Gui
 
   def show_winner(player)
     puts "Congratulations, player #{player + 1} won."
+  end
+
+  def spot_has_been_hit
+    puts "This spot has been hit. Please choose another one."
   end
 end
