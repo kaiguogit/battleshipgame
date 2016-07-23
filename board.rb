@@ -35,20 +35,6 @@ class Board
     spot(row,col)[:hit] = true
   end
 
-  def print_board
-    puts "__A_B_C_D_E_F_G_H_I_J_"
-    @board.each_with_index do |row, index|
-      print "#{index}|"
-      row.each do |col|
-        print "#{col[:shipid] == 0 ? "_" : "O"}|"  
-      end
-      puts "" 
-    end
-    puts "
-
-    "
-  end
-
   private
 
   def placable?(ship,vertical, row, col)

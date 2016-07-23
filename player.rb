@@ -2,8 +2,11 @@ class Player
 
   attr_reader :board
 
+  attr_accessor :name
+
   def initialize
     @board = Board.new
+    @name = ""
   end
 
   def place_ships_rand (ships)
@@ -15,9 +18,5 @@ class Player
         break if @board.place_ship?(ship,verticle,row,col)
       end
     end 
-  end
-
-  def print_board
-    @board.print_board
   end
 end
