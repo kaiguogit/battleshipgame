@@ -1,4 +1,7 @@
-require_relative 'board'
+require './board'
+require_relative 'ship'
+require 'pry-byebug'
+require './player'
 
 def create_ship (number,size)
   ships = []
@@ -8,11 +11,19 @@ def create_ship (number,size)
   ships
 end
 
-board = new Board
-ships = create_ship(4,1) + create_ship(3,2) + create_ship(2,3) + create_ship(1,4)
 
-while ships != []
-  row = (0...10).sample
-  col = (0...10).sample
-  board.place_ship?(ships.first)
-end
+
+player1 = Player.new
+player2 = Player.new
+
+player1_ships = create_ship(4,1) + create_ship(3,2) + create_ship(2,3) + create_ship(1,4)
+player2_ships = create_ship(4,1) + create_ship(3,2) + create_ship(2,3) + create_ship(1,4)
+
+player1.place_ships_rand(player1_ships)
+player2.place_ships_rand(player2_ships)
+
+puts "Player1's board"
+player1.print_board
+
+puts "Player2's board"
+player2.print_board
