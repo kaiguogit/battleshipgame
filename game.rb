@@ -39,9 +39,10 @@ class Game
   end
 
   def reset
+    @players[1].set_type_to_computer
+
     [0,1].each do |player|
-      ships = create_ship(1,1) 
-      #+ create_ship(3,2) + create_ship(2,3) + create_ship(1,4)
+      ships = create_ship(1,1) + create_ship(3,2) + create_ship(2,3) + create_ship(1,4)
       @players[player].place_ships_rand(ships)
     end
   end
@@ -54,15 +55,23 @@ class Game
   ships
   end
 
-  def hit
+  def hit_manual
     while true
       row = @gui.hit_row(turn)
       col = @gui.hit_col(turn)
       break if !@players[turn_opposite].board.has_been_hit?(row,col)
       @gui.spot_has_been_hit 
     end
-    @players[turn_opposite].hit_manual(row,col)
+    @players[turn_opposite].board.hit(row,col)
     @players[turn_opposite].board.has_ship?(row,col) ? @gui.you_hit_a_ship : @gui.you_missed
+  end
+
+  def hit_auto
+    while true
+      row, col = current_player.hit_rand
+      break if !@players[turn_opposite].board.has_been_hit?(row,col) 
+    end
+    @players[turn_opposite].board.hit(row,col)
   end
 
   def ship_left?(player)
@@ -72,13 +81,19 @@ class Game
   def start
     reset
     while true
-      @gui.print_player_board(@players, turn, true)
-      @gui.print_player_board(@players, turn_opposite, false)
-      @gui.show_turn(turn, @players)
-      hit
+      system("clear")
+      if(current_player.type == :human)
+        @gui.print_player_board(@players, turn, true)
+        @gui.print_player_board(@players, turn_opposite, false)
+        @gui.show_turn(turn, @players)
+        hit_manual
+      else
+        hit_auto
+      end
+
       unless ship_left?(turn_opposite)
-        @gui.show_winner(turn, current_player.name)
-        break
+          @gui.show_winner(turn, current_player.name)
+          break
       end
       toggle_turn
     end

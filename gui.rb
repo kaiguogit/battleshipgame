@@ -21,7 +21,7 @@ class Gui
         print "#{col[:hit] ? "H".green : "_"}|"
       else 
         if visible
-          print "#{col[:hit] ? "X".red : "0".yellow}|"
+          print "#{col[:hit] ? "X".red : "O".yellow}|"
         else
           print "#{col[:hit] ? "X".red : "_"}|"
         end
