@@ -40,7 +40,8 @@ class Game
 
   def reset
     [0,1].each do |player|
-      ships = create_ship(4,1) + create_ship(3,2) + create_ship(2,3) + create_ship(1,4)
+      ships = create_ship(1,1) 
+      #+ create_ship(3,2) + create_ship(2,3) + create_ship(1,4)
       @players[player].place_ships_rand(ships)
     end
   end
@@ -54,24 +55,36 @@ class Game
   end
 
   def hit
-    begin
+    while true
       row = @gui.hit_row(turn)
       col = @gui.hit_col(turn)
-      @gui.spot_has_been_hit if @players[turn_opposite].board.has_been_hit?(row,col)
-    end while @players[turn_opposite].board.has_been_hit?(row,col)
-    @players[turn_opposite].board.hit(row,col)
+      break if !@players[turn_opposite].board.has_been_hit?(row,col)
+      @gui.spot_has_been_hit 
+    end
+    @players[turn_opposite].hit_manual(row,col)
+    @players[turn_opposite].board.has_ship?(row,col) ? @gui.you_hit_a_ship : @gui.you_missed
+  end
+
+  def ship_left?(player)
+    @players[player].board.ship_left?
   end
 
   def start
-    get_player_name
     reset
     while true
-      @gui.show_turn(turn, @players)
-      hit
       @gui.print_player_board(@players, turn, true)
       @gui.print_player_board(@players, turn_opposite, false)
+      @gui.show_turn(turn, @players)
+      hit
+      unless ship_left?(turn_opposite)
+        @gui.show_winner(turn, current_player.name)
+        break
+      end
       toggle_turn
-    end 
+    end
   end 
 
+  def restart?
+    @gui.restart?
+  end
 end

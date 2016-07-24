@@ -15,6 +15,20 @@ class Board
     end
   end
 
+  def placable?(ship,vertical, row, col)
+    return false if vertical && row + ship.size - 1 >= 10
+    return false if !vertical && col + ship.size - 1 >= 10 
+
+    ship.size.times do 
+      if has_ship?(row, col)
+        return false
+      else
+        vertical ? row += 1 : col += 1
+      end 
+    end
+    true
+  end
+
   #place ship
   # if not placable, return false
   # if placable, place ship and return true
@@ -35,27 +49,21 @@ class Board
     spot(row,col)[:hit] = true
   end
 
-  private
-
-  def placable?(ship,vertical, row, col)
-    return false if vertical && row + ship.size - 1 >= 10
-    return false if !vertical && col + ship.size - 1 >= 10 
-
-    ship.size.times do 
-      if has_ship?(row, col)
-        return false
-      else
-        vertical ? row += 1 : col += 1
-      end 
-    end
-    true
-  end
-
   def has_ship?(row, col)
     spot(row,col)[:shipid] > 0 
   end
 
   def spot(row, col)
     @board[row][col]  
+  end
+  
+  #Return true if there is any ship has not been hit.
+  #Return false if no ship is placed or all have been hit.
+  def ship_left?
+    @board.detect do |row|
+      row.detect do |col|
+        col[:shipid] != 0 && col[:hit] == false  
+      end
+    end
   end
 end

@@ -19,4 +19,8 @@ class Player
       end
     end 
   end
+
+  def hit_manual(row, col)
+    @board.hit(row, col)
+  end
 end

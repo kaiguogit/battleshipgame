@@ -67,11 +67,33 @@ class Gui
     true
   end
 
-  def show_winner(player)
-    puts "Congratulations, player #{player + 1} won."
+  def show_winner(player, name)
+    puts "Congratulations, player #{player + 1}, #{name} won."
   end
 
   def spot_has_been_hit
     puts "This spot has been hit. Please choose another one."
+  end
+
+  def you_hit_a_ship
+    puts "You just hit a ship".green
+  end
+
+  def you_missed
+    puts "You missed".red
+  end
+
+  def restart?
+    puts "Do you want to restart the game? Enter Yes or No"
+    while true
+      input = get_input.chomp.downcase
+      if input == "no" 
+        return false
+      elsif input == "yes"
+        return true
+      else
+        puts "invalid input, please enter Yes or No"
+      end
+    end
   end
 end

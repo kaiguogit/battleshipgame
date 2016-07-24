@@ -8,4 +8,8 @@ require 'colorize'
 
 game = Game.new
 
+game.get_player_name
+begin
 game.start
+end while game.restart?
+puts "Bye bye"
