@@ -57,8 +57,7 @@ class Game
 
   def hit_manual
     while true
-      row = @gui.hit_row(turn)
-      col = @gui.hit_col(turn)
+      row, col = @gui.get_hit_coord(turn)
       break if !@players[turn_opposite].board.has_been_hit?(row,col)
       @gui.spot_has_been_hit 
     end

@@ -38,26 +38,30 @@ class Gui
     puts ""
   end
 
-  def hit_row(player)
+  def get_hit_coord(player)
     begin 
-      puts "Player #{player + 1} Please enter the row number you want to hit, valid iput is 0-9"
-      row = get_input
-      verify  = row.match(/^[0-9]$/)
-      puts "Invalid input.".red if verify == nil
-    end while verify == nil
-    row.to_i
+      puts "Player #{player + 1} Please enter the row number you want to hit, valid iput is [0-9][A-J], case insensitive"
+      coods = get_input
+      matches  = coods.match(/^([0-9])([a-jA-J])$/)
+      #binding.pry
+      puts "Invalid input.".red if matches == nil
+    end while matches == nil
+    alphabet = ("a".."j").to_a
+    col = alphabet.index(matches.captures[1])
+    row = matches.captures[0].to_i
+    [row, col]
   end
 
-  def hit_col(player)
-    begin 
-      puts "Player #{player + 1} Please enter the row number you want to hit, valid iput is A-J"
-      col = get_input    
-      verify = col.match(/^[a-j]$/)
-      puts "Invalid input.".red if verify ==nil
-    end while verify == nil
-    alphabet = ("a".."j").to_a
-    alphabet.index(col)
-  end
+  # def hit_col(player)
+  #   begin 
+  #     puts "Player #{player + 1} Please enter the row number you want to hit, valid iput is A-J"
+  #     col = get_input    
+  #     verify = col.match(/^[a-j]$/)
+  #     puts "Invalid input.".red if verify ==nil
+  #   end while verify == nil
+  #   alphabet = ("a".."j").to_a
+  #   alphabet.index(col)
+  # end
 
   def verify(input)
     if input > 9 || input < 0 
