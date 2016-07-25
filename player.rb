@@ -2,13 +2,14 @@ class Player
 
   attr_reader :board, :type
 
-  attr_accessor :name
+  attr_accessor :name, :ships
 
   #
   def initialize()
     @board = Board.new
     @name = ""
     @type = :human
+    @ships = []
   end
 
   def set_type_to_computer
@@ -18,8 +19,8 @@ class Player
   def set_type_to_human
     @type = :human
   end
-  
-  def place_ships_rand (ships)
+
+  def place_ships_rand
     ships.each do |ship|
       100.times do
         row = (0...10).to_a.sample

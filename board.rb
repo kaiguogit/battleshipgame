@@ -58,7 +58,7 @@ class Board
   end
   
   #Return true if there is any ship has not been hit.
-  #Return false if no ship is placed or all have been hit.
+  #Return false bif no ship is placed or all have been hit.
   def ship_left?
     @board.detect do |row|
       row.detect do |col|
