@@ -9,12 +9,16 @@ class Board
   # 3 means occuiped by has been hit by user
   def initialize(ships)
     @board = Array.new(10){Array.new(10)}
+    reset
+    @ships = ships
+  end
+
+  def reset
     @board.map! do |row|
       row.map! do |col|
         col = {shipid: 0, hit: false}
       end
     end
-    @ships = ships
   end
 
   def placable?(ship,vertical, row, col)
@@ -45,7 +49,7 @@ class Board
   def isSpotSunk?(row, col)
     get_ship(row, col).isSunk?
   end
-  
+
   def get_ship(row, col)
     id = spot(row, col)[:shipid]
     raise ArgumentError, 'No ship in this cell' if id == 0

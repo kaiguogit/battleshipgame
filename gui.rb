@@ -12,25 +12,44 @@ class Gui
 
 # TODO change this method to print two board in one row hotizotally  
   def print_player_board(players, turn, visible)
-    puts "Player #{turn + 1}'s board:"
-    puts "  A B C D E F G H I J ".black.on_cyan.bold.underline
-    board = players[turn].board
-    board.board.each_with_index do |row, row_index|
+    turn_opposite = (turn == 1 ? 0 : 1)
+    puts "Player #{turn + 1}, #{players[turn].name}'s board:     Player #{turn_opposite + 1}, #{players[turn_opposite].name}'s board:"
+    puts "#{"  A B C D E F G H I J ".black.on_cyan.bold.underline}     #{"  A B C D E F G H I J ".black.on_cyan.bold.underline}"
+    board1 = players[turn].board
+    board2 = players[turn_opposite].board
+    (0..9).each do |row_index|
       print "#{row_index}|".black.on_cyan
-      row.each_with_index do |col, col_index|
-        if col[:shipid] == 0
-          print "#{col[:hit] ? " ".on_white : "_".black.on_cyan}#{"|".black.on_cyan}"
-        else 
-          if col[:hit]
-            print "#{board.isSpotSunk?(row_index, col_index) ? " ".on_black : "X".black.on_red.bold.underline }#{"|".black.on_cyan}"
-            #print "#{col[:hit] ? (board.isSpotSunk?(row_index, col_index) ? "X".grey : "X".red ) : "O".yellow}|"
-          else
-            print "#{visible ? "_".black.on_blue : "_".black.on_cyan }#{"|".black.on_cyan}"
-            # print "#{col[:hit] ? (board.isSpotSunk?(row_index, col_index) ? "X".grey : "X".red )  : "_"}|"
-          end
+      print_player_board_row(board1, row_index, visible) 
+      print "     "
+      print "#{row_index}|".black.on_cyan      
+      print_player_board_row(board2, row_index, !visible) 
+      puts "" 
+    end
+  end
+
+  def print_player_board_row(board, row_index, visible)
+    board.board[row_index].each_with_index do |col, col_index|
+      if col[:shipid] == 0
+        print "#{col[:hit] ? " ".on_white : "_".black.on_cyan}#{"|".black.on_cyan}"
+      else 
+        if col[:hit]
+          print "#{board.isSpotSunk?(row_index, col_index) ? " ".on_black : "X".black.on_red.bold.underline }#{"|".black.on_cyan}"
+          #print "#{col[:hit] ? (board.isSpotSunk?(row_index, col_index) ? "X".grey : "X".red ) : "O".yellow}|"
+        else
+          print "#{visible ? "_".black.on_blue : "_".black.on_cyan }#{"|".black.on_cyan}"
+          # print "#{col[:hit] ? (board.isSpotSunk?(row_index, col_index) ? "X".grey : "X".red )  : "_"}|"
         end
       end
-      puts "" 
+    end
+  end
+
+  def print_ship_left(players, turn)
+    puts "Player #{turn+1}, #{players[turn].name}'s remaining ship: "
+    puts "Name              size"
+    players[turn].ships.each do |ship|
+      ship_name = "#{ship.type.to_s.gsub(/_/, " ").capitalize}"
+      ship_name += " " * (20 - ship_name.size) 
+      puts "#{ship_name}#{ship.size}" unless ship.isSunk?
     end
   end
 
@@ -38,9 +57,9 @@ class Gui
     puts "It's now player #{turn + 1}, #{players[turn].name}'s turn."
   end
 
-  def get_hit_coord(player)
+  def get_hit_coord(players, turn)
     begin 
-      puts "Player #{player + 1} Please enter the row number you want to hit, valid iput is [0-9][A-J], case insensitive"
+      puts "Player #{turn + 1} #{players[turn].name}, please enter the row number you want to hit, valid iput is [0-9][A-J], case insensitive"
       coods = get_input
       matches  = coods.match(/^([0-9])([a-jA-J])$/)
       #binding.pry
@@ -60,8 +79,12 @@ class Gui
     true
   end
 
-  def show_winner(player, name)
-    puts "Congratulations, player #{player + 1}, #{name} won."
+  def show_winner(players, turn)
+    if turn == 0 
+      puts "Congratulations, #{players[turn].name}, you won.".red.on_green
+    else
+      puts "Sorry, AI won.".blue.on_red
+    end
   end
 
   def spot_has_been_hit
@@ -77,7 +100,7 @@ class Gui
   end
 
   def you_sank_a_ship(shiptype)
-    puts "You just sank a #{shiptype.capitalize}.".green    
+    puts "You just sank a #{shiptype.gsub(/_/, " ").capitalize}.".green    
   end
 
   def restart?

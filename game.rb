@@ -32,15 +32,13 @@ class Game
   end
 
   def get_player_name
-    2.times do 
-      current_player.name = @gui.enter_player_name(turn)
-      toggle_turn
-    end
+      @players[0].name = @gui.enter_player_name(0)
+      @players[1].name = "AI"
   end
 
   def reset
+    @players.each {|player| player.board.reset}
     @players[1].set_type_to_computer
-    create_ship
     [0,1].each do |player|
       @players[player].ships = create_ship
       @players[player].place_ships_rand
@@ -62,7 +60,7 @@ class Game
     end 
 
     while true
-      row, col = @gui.get_hit_coord(turn)
+      row, col = @gui.get_hit_coord(@players, turn)
       break if !@players[turn_opposite].board.has_been_hit?(row,col)
       @gui.spot_has_been_hit 
     end
@@ -78,11 +76,11 @@ class Game
     @players[turn_opposite].board.hit(row,col)
   end
 
-# TODO modify so two board can be printed in 1 row
   def print_boards
+    system("clear")
     @gui.print_player_board(@players, turn, true)
-    @gui.print_player_board(@players, turn_opposite, false)
-    @gui.show_turn(turn, @players)
+    @gui.print_ship_left(@players, turn_opposite)
+    #@gui.show_turn(turn, @players)
   end
 
   def ship_left?(player)
@@ -92,14 +90,15 @@ class Game
   def start
     reset
     while true
-      system("clear")
       if(current_player.type == :human)
         previous_hit_coord = hit_manual(previous_hit_coord)
       else
         hit_auto
       end
       unless ship_left?(turn_opposite)
-          @gui.show_winner(turn, current_player.name)
+          system("clear")
+          @gui.print_player_board(@players, turn, true)
+          @gui.show_winner(@players, turn)
           break
       end
       toggle_turn
