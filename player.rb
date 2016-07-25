@@ -6,10 +6,15 @@ class Player
 
   #
   def initialize()
-    @board = Board.new
+    @board = Board.new([])
     @name = ""
     @type = :human
     @ships = []
+  end
+
+  def ships=(ships)
+    @board.ships = ships
+    @ships = ships
   end
 
   def set_type_to_computer

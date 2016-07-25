@@ -10,11 +10,14 @@ class Ship
     @size = AVAILABLE_SHIPS[type]
 
     @type = type
-    
+
     @@shipcount += 1
 
     @id = @@shipcount
 
+    @damage = 0
+
+    @sunk = false
   end
 
 end
