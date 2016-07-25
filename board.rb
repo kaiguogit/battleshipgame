@@ -41,6 +41,12 @@ class Board
     end 
   end
 
+  def get_ship(row, col)
+    id = spot(row, col)[:shipid]
+    raise ArgumentError, 'No ship in this cell' if id == 0
+    ships.select{|ship| ship.id == id}[0]
+  end
+
   def get_ship_coord(ship)
     raise ArgumentError, 'This ship is not on this board' unless ships.include?(ship)
     cells = []
@@ -75,6 +81,7 @@ class Board
 
   def hit(row, col)
     spot(row,col)[:hit] = true
+    update_ship_status
   end
 
   def has_ship?(row, col)

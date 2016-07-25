@@ -3,7 +3,9 @@ class Ship
  AVAILABLE_SHIPS = {patrolboat: 2, destroyer: 3, submarine: 3, battleship: 4, aircraft_carrier: 5}
  @@shipcount = 0
 
- attr_accessor :size, :id
+ attr_reader :size, :type
+
+ attr_accessor :id, :damage
 
   def initialize(type)
 
@@ -16,8 +18,10 @@ class Ship
     @id = @@shipcount
 
     @damage = 0
-
-    @sunk = false
   end
 
+  def isSunk?
+    raise ArgumentError, 'damage is higher than ship size' if damage > size
+    damage == size
+  end
 end

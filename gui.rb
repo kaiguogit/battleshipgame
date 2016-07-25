@@ -10,32 +10,29 @@ class Gui
       get_input.capitalize
   end
 
-
+# TODO change this method to print two board in one row hotizotally  
   def print_player_board(players, turn, visible)
-  puts "Player #{turn + 1}'s board:"
-  puts "__A_B_C_D_E_F_G_H_I_J_"
-  players[turn].board.board.each_with_index do |row, index|
-    print "#{index}|"
-    row.each do |col|
-      if col[:shipid] == 0
-        print "#{col[:hit] ? "H".green : "_"}|"
-      else 
-        if visible
-          print "#{col[:hit] ? "X".red : "O".yellow}|"
-        else
-          print "#{col[:hit] ? "X".red : "_"}|"
+    puts "Player #{turn + 1}'s board:"
+    puts "__A_B_C_D_E_F_G_H_I_J_"
+    players[turn].board.board.each_with_index do |row, index|
+      print "#{index}|"
+      row.each do |col|
+        if col[:shipid] == 0
+          print "#{col[:hit] ? "H".green : "_"}|"
+        else 
+          if visible
+            print "#{col[:hit] ? "X".red : "O".yellow}|"
+          else
+            print "#{col[:hit] ? "X".red : "_"}|"
+          end
         end
       end
+      puts "" 
     end
-    puts "" 
-  end
-  puts "
-  "
   end
 
   def show_turn(turn, players)
     puts "It's now player #{turn + 1}, #{players[turn].name}'s turn."
-    puts ""
   end
 
   def get_hit_coord(player)
@@ -87,6 +84,10 @@ class Gui
     puts "You missed".red
   end
 
+  def you_sank_a_ship(shiptype)
+    puts "You just sank a #{shiptype.captilize}.".green    
+  end
+  
   def restart?
     puts "Do you want to restart the game? Enter Yes or No"
     while true

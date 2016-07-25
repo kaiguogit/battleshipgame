@@ -47,15 +47,26 @@ class Game
     end
   end
 
-  def hit_manual
+  def hit_manual(previous_hit_coord)
     print_boards
+
+    if previous_hit_coord
+      row, col = previous_hit_coord
+      if @players[turn_opposite].board.has_ship?(row,col)
+        ship = @players[turn_opposite].board.get_ship(row,col)
+        ship.isSunk? ? @gui.you_sank_a_ship(ship.type.to_s) : @gui.you_hit_a_ship
+      else
+        @gui.you_missed
+      end
+    end 
+
     while true
       row, col = @gui.get_hit_coord(turn)
       break if !@players[turn_opposite].board.has_been_hit?(row,col)
       @gui.spot_has_been_hit 
     end
     @players[turn_opposite].board.hit(row,col)
-    @players[turn_opposite].board.has_ship?(row,col) ? @gui.you_hit_a_ship : @gui.you_missed
+    [row, col]
   end
 
   def hit_auto
@@ -66,6 +77,7 @@ class Game
     @players[turn_opposite].board.hit(row,col)
   end
 
+# TODO modify so two board can be printed in 1 row
   def print_boards
     @gui.print_player_board(@players, turn, true)
     @gui.print_player_board(@players, turn_opposite, false)
@@ -81,7 +93,7 @@ class Game
     while true
       system("clear")
       if(current_player.type == :human)
-        hit_manual
+        previous_hit_coord = hit_manual(previous_hit_coord)
       else
         hit_auto
       end
