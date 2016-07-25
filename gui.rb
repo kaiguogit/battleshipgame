@@ -13,17 +13,20 @@ class Gui
 # TODO change this method to print two board in one row hotizotally  
   def print_player_board(players, turn, visible)
     puts "Player #{turn + 1}'s board:"
-    puts "__A_B_C_D_E_F_G_H_I_J_"
-    players[turn].board.board.each_with_index do |row, index|
-      print "#{index}|"
-      row.each do |col|
+    puts "  A B C D E F G H I J ".black.on_cyan.bold.underline
+    board = players[turn].board
+    board.board.each_with_index do |row, row_index|
+      print "#{row_index}|".black.on_cyan
+      row.each_with_index do |col, col_index|
         if col[:shipid] == 0
-          print "#{col[:hit] ? "H".green : "_"}|"
+          print "#{col[:hit] ? " ".on_white : "_".black.on_cyan}#{"|".black.on_cyan}"
         else 
-          if visible
-            print "#{col[:hit] ? "X".red : "O".yellow}|"
+          if col[:hit]
+            print "#{board.isSpotSunk?(row_index, col_index) ? " ".on_black : "X".black.on_red.bold.underline }#{"|".black.on_cyan}"
+            #print "#{col[:hit] ? (board.isSpotSunk?(row_index, col_index) ? "X".grey : "X".red ) : "O".yellow}|"
           else
-            print "#{col[:hit] ? "X".red : "_"}|"
+            print "#{visible ? "_".black.on_blue : "_".black.on_cyan }#{"|".black.on_cyan}"
+            # print "#{col[:hit] ? (board.isSpotSunk?(row_index, col_index) ? "X".grey : "X".red )  : "_"}|"
           end
         end
       end
@@ -48,17 +51,6 @@ class Gui
     row = matches.captures[0].to_i
     [row, col]
   end
-
-  # def hit_col(player)
-  #   begin 
-  #     puts "Player #{player + 1} Please enter the row number you want to hit, valid iput is A-J"
-  #     col = get_input    
-  #     verify = col.match(/^[a-j]$/)
-  #     puts "Invalid input.".red if verify ==nil
-  #   end while verify == nil
-  #   alphabet = ("a".."j").to_a
-  #   alphabet.index(col)
-  # end
 
   def verify(input)
     if input > 9 || input < 0 
@@ -85,9 +77,9 @@ class Gui
   end
 
   def you_sank_a_ship(shiptype)
-    puts "You just sank a #{shiptype.captilize}.".green    
+    puts "You just sank a #{shiptype.capitalize}.".green    
   end
-  
+
   def restart?
     puts "Do you want to restart the game? Enter Yes or No"
     while true

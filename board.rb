@@ -32,15 +32,20 @@ class Board
   end
   
   def update_ship_status
+    # binding.pry
     @ships.each do |ship|
       ship.damage = board.inject(0) do |sum, row|
-        row.count do |col|
+        sum + row.count do |col|
           col[:shipid] == ship.id && col[:hit] == true
         end
       end
     end 
   end
 
+  def isSpotSunk?(row, col)
+    get_ship(row, col).isSunk?
+  end
+  
   def get_ship(row, col)
     id = spot(row, col)[:shipid]
     raise ArgumentError, 'No ship in this cell' if id == 0

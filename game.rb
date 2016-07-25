@@ -54,6 +54,7 @@ class Game
       row, col = previous_hit_coord
       if @players[turn_opposite].board.has_ship?(row,col)
         ship = @players[turn_opposite].board.get_ship(row,col)
+        #binding.pry
         ship.isSunk? ? @gui.you_sank_a_ship(ship.type.to_s) : @gui.you_hit_a_ship
       else
         @gui.you_missed
