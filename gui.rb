@@ -43,6 +43,17 @@ class Gui
     end
   end
 
+  def print_prob_grid(prob_grid)
+    puts "#{"  A B C D E F G H I J ".black.on_white.bold.underline}"
+    prob_grid.each_with_index do |row, row_index|
+      print "#{row_index}|".black.on_white
+      row.each do |col|
+        print "#{col}|"
+      end
+      puts ""
+    end
+  end
+
   def print_ship_left(players, turn)
     puts "Player #{turn+1}, #{players[turn].name}'s remaining ship: "
     puts "Name              size"

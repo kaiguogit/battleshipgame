@@ -25,7 +25,8 @@ class Ai
     {coord: [9,9], weight: rand(OPEN_HIGH_MIN..OPEN_HIGH_MAX)},
     {coord: [0,0], weight: rand(OPEN_HIGH_MIN..OPEN_HIGH_MAX)}
   ]
-  attr_reader :board, :ships
+  
+  attr_reader :board, :ships, :prob_grid
 
 
   def initialize(board)
@@ -35,7 +36,7 @@ class Ai
   end  
 
   def shoot
-    update_prob_grid
+    #update_prob_grid
     OPENING.each do |cell|
       if @prob_grid[cell[:coord][0]][cell[:coord][1]] != 0
       @prob_grid[cell[:coord][0]][cell[:coord][1]] += cell[:weight] 
@@ -75,8 +76,9 @@ class Ai
       if board.isLegal?(ship, vertical, row , col)
         x, y = row, col
         if board.passThroughHitCell?(ship, vertical, row, col)
+          count = board.numHitCellCovered(ship, vertical, row, col)
           ship.size.times do
-            @prob_grid[x][y] += PROB_WEIGHT * board.numHitCellCovered(ship, vertical, row, col)
+            @prob_grid[x][y] += PROB_WEIGHT * count
             vertical ? x += 1 : y +=1
           end
         else

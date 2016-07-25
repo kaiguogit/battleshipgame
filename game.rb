@@ -50,6 +50,7 @@ class Game
 
   def hit_manual(previous_hit_coord)
     print_boards
+   # @gui.print_prob_grid(@robot.prob_grid)
 
     if previous_hit_coord
       row, col = previous_hit_coord
@@ -83,6 +84,7 @@ class Game
     # binding.pry
     row, col = @robot.shoot
     @players[turn_opposite].board.hit(row,col)
+    @robot.update_prob_grid
   end
 
   def print_boards

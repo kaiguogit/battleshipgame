@@ -37,13 +37,17 @@ class Board
     return false if vertical && row + ship.size > Game::GRID_SIZE
     return false if !vertical && col + ship.size > Game::GRID_SIZE
     ship.size.times do 
-      if has_been_hit?(row, col) && (!has_ship?(row, col) || isSpotSunk?(row, col))
+      if isSpotMiss?(row,col) || isSpotSunk?(row, col)
         return false
       else
         vertical ? row += 1 : col += 1
       end 
     end
     true
+  end
+
+  def isSpotMiss?(row, col)
+    has_been_hit?(row, col) && !has_ship?(row, col)
   end
 
   def update_ship_status
@@ -59,7 +63,7 @@ class Board
 
   def passThroughHitCell?(ship, vertical, row, col)
     ship.size.times do 
-      return true if has_been_hit?(row, col) && has_ship?(row, col)
+      return true if isSpotDamagedShip?(row, col)
       vertical ? row +=1 : col +=1
     end
     false
@@ -68,7 +72,7 @@ class Board
   def numHitCellCovered(ship, vertical, row, col)
     count = 0
     ship.size.times do
-      count +=1 if has_been_hit?(row, col) && has_ship?(row, col)
+      count +=1 if isSpotDamagedShip?(row, col)
       vertical ? row +=1 : col +=1
     end
     count
@@ -79,12 +83,18 @@ class Board
   end
 
   def isSpotSunk?(row, col)
-    get_ship(row, col).isSunk?
+    update_ship_status
+    ship = get_ship(row, col)
+    ship == nil ? false : get_ship(row, col).isSunk?
+  end
+
+  def isSpotDamagedShip?(row, col) 
+    !isSpotSunk?(row, col) && has_been_hit?(row, col) && has_ship?(row, col)
   end
 
   def get_ship(row, col)
     id = spot(row, col)[:shipid]
-    raise ArgumentError, 'No ship in this cell' if id == 0
+    return nil if id == 0
     ships.select{|ship| ship.id == id}[0]
   end
 
