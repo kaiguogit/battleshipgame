@@ -22,9 +22,7 @@ class Board
   end
 
   def placable?(ship,vertical, row, col)
-    return false if vertical && row + ship.size - 1 >= 10
-    return false if !vertical && col + ship.size - 1 >= 10 
-
+    return false unless isLegal?(ship, vertical, row, col)
     ship.size.times do 
       if has_ship?(row, col)
         return false
@@ -35,6 +33,19 @@ class Board
     true
   end
   
+  def isLegal?(ship, vertical, row, col)
+    return false if vertical && row + ship.size > Game::GRID_SIZE
+    return false if !vertical && col + ship.size > Game::GRID_SIZE
+    ship.size.times do 
+      if has_been_hit?(row, col) && (!has_ship?(row, col) || isSpotSunk?(row, col))
+        return false
+      else
+        vertical ? row += 1 : col += 1
+      end 
+    end
+    true
+  end
+
   def update_ship_status
     # binding.pry
     @ships.each do |ship|
@@ -44,6 +55,27 @@ class Board
         end
       end
     end 
+  end
+
+  def passThroughHitCell?(ship, vertical, row, col)
+    ship.size.times do 
+      return true if has_been_hit?(row, col) && has_ship?(row, col)
+      vertical ? row +=1 : col +=1
+    end
+    false
+  end
+
+  def numHitCellCovered(ship, vertical, row, col)
+    count = 0
+    ship.size.times do
+      count +=1 if has_been_hit?(row, col) && has_ship?(row, col)
+      vertical ? row +=1 : col +=1
+    end
+    count
+  end
+
+  def ships_left
+    @ships.select {|ship| !ship.isSunk?}
   end
 
   def isSpotSunk?(row, col)

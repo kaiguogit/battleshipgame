@@ -5,6 +5,7 @@ require_relative 'gui'
 require_relative 'player'
 require_relative 'game'
 require 'colorize'
+require_relative 'ai'
 
 game = Game.new
 

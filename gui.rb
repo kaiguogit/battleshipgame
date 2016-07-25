@@ -11,18 +11,18 @@ class Gui
   end
 
 # TODO change this method to print two board in one row hotizotally  
-  def print_player_board(players, turn, visible)
+  def print_player_board(players, turn, visible, end_of_game)
     turn_opposite = (turn == 1 ? 0 : 1)
     puts "Player #{turn + 1}, #{players[turn].name}'s board:     Player #{turn_opposite + 1}, #{players[turn_opposite].name}'s board:"
-    puts "#{"  A B C D E F G H I J ".black.on_cyan.bold.underline}     #{"  A B C D E F G H I J ".black.on_cyan.bold.underline}"
+    puts "#{"  A B C D E F G H I J ".black.on_white.bold.underline}     #{"  A B C D E F G H I J ".black.on_white.bold.underline}"
     board1 = players[turn].board
     board2 = players[turn_opposite].board
     (0..9).each do |row_index|
-      print "#{row_index}|".black.on_cyan
-      print_player_board_row(board1, row_index, visible) 
+      print "#{row_index}|".black.on_white
+      print_player_board_row(board1, row_index, visible || end_of_game) 
       print "     "
-      print "#{row_index}|".black.on_cyan      
-      print_player_board_row(board2, row_index, !visible) 
+      print "#{row_index}|".black.on_white      
+      print_player_board_row(board2, row_index, !visible || end_of_game) 
       puts "" 
     end
   end
@@ -30,13 +30,13 @@ class Gui
   def print_player_board_row(board, row_index, visible)
     board.board[row_index].each_with_index do |col, col_index|
       if col[:shipid] == 0
-        print "#{col[:hit] ? " ".on_white : "_".black.on_cyan}#{"|".black.on_cyan}"
+        print "#{col[:hit] ? " ".on_green : "_".black.on_white}#{"|".black.on_white}"
       else 
         if col[:hit]
-          print "#{board.isSpotSunk?(row_index, col_index) ? " ".on_black : "X".black.on_red.bold.underline }#{"|".black.on_cyan}"
+          print "#{board.isSpotSunk?(row_index, col_index) ? " ".on_black : "X".black.on_red.bold.underline }#{"|".black.on_white}"
           #print "#{col[:hit] ? (board.isSpotSunk?(row_index, col_index) ? "X".grey : "X".red ) : "O".yellow}|"
         else
-          print "#{visible ? "_".black.on_blue : "_".black.on_cyan }#{"|".black.on_cyan}"
+          print "#{visible ? "_".black.on_yellow : "_".black.on_white }#{"|".black.on_white}"
           # print "#{col[:hit] ? (board.isSpotSunk?(row_index, col_index) ? "X".grey : "X".red )  : "_"}|"
         end
       end
@@ -80,10 +80,12 @@ class Gui
   end
 
   def show_winner(players, turn)
-    if turn == 0 
-      puts "Congratulations, #{players[turn].name}, you won.".red.on_green
+    if turn == 0
+      puts 
+      puts "Congratulations, #{players[turn].name}, you won.".red
     else
-      puts "Sorry, AI won.".blue.on_red
+      puts ""
+      puts "Sorry, AI won.".red
     end
   end
 

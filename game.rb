@@ -1,4 +1,6 @@
 class Game
+ 
+  GRID_SIZE = 10
 
   def initialize()
     @players = [Player.new, Player.new]
@@ -43,6 +45,7 @@ class Game
       @players[player].ships = create_ship
       @players[player].place_ships_rand
     end
+    @robot = Ai.new(@players[0].board)
   end
 
   def hit_manual(previous_hit_coord)
@@ -68,7 +71,7 @@ class Game
     [row, col]
   end
 
-  def hit_auto
+  def hit_random
     while true
       row, col = current_player.hit_rand
       break if !@players[turn_opposite].board.has_been_hit?(row,col) 
@@ -76,9 +79,15 @@ class Game
     @players[turn_opposite].board.hit(row,col)
   end
 
+  def hit_auto
+    # binding.pry
+    row, col = @robot.shoot
+    @players[turn_opposite].board.hit(row,col)
+  end
+
   def print_boards
     system("clear")
-    @gui.print_player_board(@players, turn, true)
+    @gui.print_player_board(@players, turn, true, false)
     @gui.print_ship_left(@players, turn_opposite)
     #@gui.show_turn(turn, @players)
   end
@@ -97,7 +106,7 @@ class Game
       end
       unless ship_left?(turn_opposite)
           system("clear")
-          @gui.print_player_board(@players, turn, true)
+          @gui.print_player_board(@players, 0, true, true)
           @gui.show_winner(@players, turn)
           break
       end
