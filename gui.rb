@@ -26,7 +26,7 @@ class Gui
       puts "" 
     end
   end
-
+  
   def print_player_board_row(board, row_index, visible)
     board.board[row_index].each_with_index do |col, col_index|
       if col[:shipid] == 0
@@ -72,12 +72,12 @@ class Gui
     begin 
       puts "Player #{turn + 1} #{players[turn].name}, please enter the row number you want to hit, valid iput is [0-9][A-J], case insensitive"
       coods = get_input
-      matches  = coods.match(/^([0-9])([a-jA-J])$/)
+      matches  = coods.match(/^(\d)([a-j])$/i)
       #binding.pry
       puts "Invalid input.".red if matches == nil
     end while matches == nil
     alphabet = ("a".."j").to_a
-    col = alphabet.index(matches.captures[1])
+    col = alphabet.index(matches.captures[1].downcase)
     row = matches.captures[0].to_i
     [row, col]
   end

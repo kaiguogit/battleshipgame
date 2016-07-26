@@ -2,11 +2,7 @@ class Board
 
   attr_reader :board
   attr_accessor :ships
-  #on the board
-  # 0 means empty
-  # 1 means empty but has been hit by user
-  # 2 means occupied
-  # 3 means occuiped by has been hit by user
+
   def initialize(ships)
     @board = Array.new(10){Array.new(10)}
     reset
@@ -45,20 +41,21 @@ class Board
     end
     true
   end
+  
+  #place ship
+  # if not placable, return false
+  # if placable, place ship and return true
+  def place_ship(ship, vertical, row, col)
+      return false unless placable?(ship, vertical,row,col)
+      ship.size.times do
+        spot(row,col)[:shipid] = ship.id
+        vertical ? row += 1 : col += 1
+      end
+      true
+  end
 
   def isSpotMiss?(row, col)
     has_been_hit?(row, col) && !has_ship?(row, col)
-  end
-
-  def update_ship_status
-    # binding.pry
-    @ships.each do |ship|
-      ship.damage = board.inject(0) do |sum, row|
-        sum + row.count do |col|
-          col[:shipid] == ship.id && col[:hit] == true
-        end
-      end
-    end 
   end
 
   def passThroughHitCell?(ship, vertical, row, col)
@@ -114,17 +111,6 @@ class Board
     cells = get_ship_coord
     vertical =  cells.size == 1 || (cells[0][1] == cells[1][1])
   end
-  #place ship
-  # if not placable, return false
-  # if placable, place ship and return true
-  def place_ship?(ship, vertical, row, col)
-      return false unless placable?(ship, vertical,row,col)
-      ship.size.times do
-        spot(row,col)[:shipid] = ship.id
-        vertical ? row += 1 : col += 1
-      end
-      true
-  end
 
   def has_been_hit?(row, col)
     spot(row,col)[:hit]
@@ -138,10 +124,6 @@ class Board
   def has_ship?(row, col)
     spot(row,col)[:shipid] > 0 
   end
-
-  def spot(row, col)
-    board[row][col]  
-  end
   
   #Return true if there is any ship has not been hit.
   #Return false bif no ship is placed or all have been hit.
@@ -151,5 +133,22 @@ class Board
         col[:shipid] != 0 && col[:hit] == false  
       end
     end
+  end
+
+  private
+
+  def spot(row, col)
+    board[row][col]  
+  end
+
+  def update_ship_status
+    # binding.pry
+    ships.each do |ship|
+      ship.damage = board.inject(0) do |sum, row|
+        sum + row.count do |col|
+          col[:shipid] == ship.id && col[:hit] == true
+        end
+      end
+    end 
   end
 end

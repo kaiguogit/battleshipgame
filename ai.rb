@@ -36,7 +36,7 @@ class Ai
   end  
 
   def shoot
-    #update_prob_grid
+    update_prob_grid
     OPENING.each do |cell|
       if @prob_grid[cell[:coord][0]][cell[:coord][1]] != 0
       @prob_grid[cell[:coord][0]][cell[:coord][1]] += cell[:weight] 
@@ -58,7 +58,6 @@ class Ai
   end
 
   def update_prob_grid
-    # binding.pry
 
     reset_prob_grid
     board.ships_left.each do |ship|

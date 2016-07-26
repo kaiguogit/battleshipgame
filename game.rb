@@ -2,8 +2,10 @@ class Game
  
   GRID_SIZE = 10
 
+  attr_reader :gui
+
   def initialize()
-    @players = [Player.new, Player.new]
+    @players = [Player.new(:human), Player.new(:computer)]
     @turn = 0
     @gui = Gui.new
   end
@@ -34,13 +36,12 @@ class Game
   end
 
   def get_player_name
-      @players[0].name = @gui.enter_player_name(0)
+      @players[0].name = gui.enter_player_name(0)
       @players[1].name = "AI"
   end
 
   def reset
     @players.each {|player| player.board.reset}
-    @players[1].set_type_to_computer
     [0,1].each do |player|
       @players[player].ships = create_ship
       @players[player].place_ships_rand
@@ -50,23 +51,22 @@ class Game
 
   def hit_manual(previous_hit_coord)
     print_boards
-   # @gui.print_prob_grid(@robot.prob_grid)
+    #gui.print_prob_grid(@robot.prob_grid)
 
     if previous_hit_coord
       row, col = previous_hit_coord
       if @players[turn_opposite].board.has_ship?(row,col)
         ship = @players[turn_opposite].board.get_ship(row,col)
-        #binding.pry
-        ship.isSunk? ? @gui.you_sank_a_ship(ship.type.to_s) : @gui.you_hit_a_ship
+        ship.isSunk? ? gui.you_sank_a_ship(ship.type.to_s) : gui.you_hit_a_ship
       else
-        @gui.you_missed
+        gui.you_missed
       end
     end 
 
     while true
-      row, col = @gui.get_hit_coord(@players, turn)
+      row, col = gui.get_hit_coord(@players, turn)
       break if !@players[turn_opposite].board.has_been_hit?(row,col)
-      @gui.spot_has_been_hit 
+      gui.spot_has_been_hit 
     end
     @players[turn_opposite].board.hit(row,col)
     [row, col]
@@ -81,17 +81,14 @@ class Game
   end
 
   def hit_auto
-    # binding.pry
     row, col = @robot.shoot
     @players[turn_opposite].board.hit(row,col)
-    @robot.update_prob_grid
   end
 
   def print_boards
     system("clear")
-    @gui.print_player_board(@players, turn, true, false)
-    @gui.print_ship_left(@players, turn_opposite)
-    #@gui.show_turn(turn, @players)
+    gui.print_player_board(@players, turn, true, false)
+    gui.print_ship_left(@players, turn_opposite)
   end
 
   def ship_left?(player)
@@ -101,15 +98,15 @@ class Game
   def start
     reset
     while true
-      if(current_player.type == :human)
+      if(current_player.isHuman?)
         previous_hit_coord = hit_manual(previous_hit_coord)
       else
         hit_auto
       end
       unless ship_left?(turn_opposite)
           system("clear")
-          @gui.print_player_board(@players, 0, true, true)
-          @gui.show_winner(@players, turn)
+          gui.print_player_board(@players, 0, true, true)
+          gui.show_winner(@players, turn)
           break
       end
       toggle_turn
@@ -117,6 +114,6 @@ class Game
   end 
 
   def restart?
-    @gui.restart?
+    gui.restart?
   end
 end
